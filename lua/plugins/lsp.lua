@@ -45,9 +45,7 @@ vim.lsp.enable({
 vim.keymap.set('i', '<S-Tab>', '<C-x><C-o>', {desc = 'Trigger Omni Completion'})
 
 --Toggleable Inline Hints
-if vim.bo.filetype ~= '' then
-	vim.lsp.inlay_hint.enable(true)
-end
+vim.lsp.inlay_hint.enable(true)
 vim.keymap.set('n', '<leader>th', function()
   vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
 end, { desc = 'Toggle Inlay Hints' })
@@ -60,7 +58,7 @@ local function enable_autocomplete()
 	callback = function()
 		local c = vim.v.char
 		-- Only trigger if the popup menu is not already visible
-		if vim.fn.pumvisible() == 0 then
+		if vim.fn.pumvisible() == 0 and not vim.tbl_isempty(vim.lsp.get_clients({bufnr = 0})) then
 			if c == '}' or c == ']' or c == ')' or c == '{' or c == ',' or c == ':' then
 				return
 			end
@@ -71,11 +69,7 @@ local function enable_autocomplete()
 	})
 end
 
-local my_autocomplete = 0
-if vim.bo.filetype ~= '' then
-	my_autocomplete = enable_autocomplete()
-end
-
+local my_autocomplete = enable_autocomplete()
 vim.keymap.set('n', '<leader>ta', function()
 	if my_autocomplete == 0 then
 		my_autocomplete = enable_autocomplete()
@@ -91,16 +85,12 @@ local function enable_warn_hover()
 	vim.o.updatetime = 300
 	return vim.api.nvim_create_autocmd("CursorHold", {
 		callback = function()
-			vim.diagnostic.open_float(nil, {focasable = false})
+			vim.diagnostic.open_float(nil, {focusable = false})
 		end,
 	})
 end
 
-local my_warns = 0
-if vim.bo.filetype ~= '' then
-	my_warns = enable_warn_hover()
-end
-
+local my_warns = enable_warn_hover()
 vim.keymap.set('n', '<leader>tw', function()
 	if my_warns == 0 then
 		my_warns = enable_warn_hover()
