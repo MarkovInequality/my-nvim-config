@@ -53,23 +53,31 @@ end, { desc = 'Toggle Inlay Hints' })
 
 --Toggleable autocomplete
 vim.opt.completeopt = { 'menuone', 'noinsert' }
+local non_triggers = {'}', ']', ')', '{', ',', ':', ';', '\'', '\"'}
 local function enable_autocomplete()
-	return vim.api.nvim_create_autocmd("InsertCharPre", {
+	return vim.api.nvim_create_autocmd('InsertCharPre', {
 	callback = function()
 		local c = vim.v.char
 		-- Only trigger if the popup menu is not already visible
-		if vim.fn.pumvisible() == 0 and not vim.tbl_isempty(vim.lsp.get_clients({bufnr = 0})) then
-			if c == '}' or c == ']' or c == ')' or c == '{' or c == ',' or c == ':' then
-				return
+		if vim.fn.pumvisible() == 0 then
+			if not vim.list_contains(non_triggers, c) then
+				local keys = vim.api.nvim_replace_termcodes("<C-x><C-o>", true, false, true)
+				vim.fn.feedkeys(keys, "n")
 			end
-			local keys = vim.api.nvim_replace_termcodes("<C-x><C-o>", true, false, true)
-			vim.fn.feedkeys(keys, "n")
 		end
 	end,
 	})
 end
 
-local my_autocomplete = enable_autocomplete()
+local my_autocomplete = 0
+vim.api.nvim_create_autocmd('LspAttach', {
+	callback = function(args)
+		local client = assert(vim.lsp.get_client_by_id(args.data.client_id))
+		if client:supports_method('textDocument/completion') then
+			my_autocomplete = enable_autocomplete()
+		end
+	end
+})
 vim.keymap.set('n', '<leader>ta', function()
 	if my_autocomplete == 0 then
 		my_autocomplete = enable_autocomplete()
