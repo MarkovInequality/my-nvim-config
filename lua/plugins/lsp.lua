@@ -12,11 +12,13 @@ vim.lsp.config['lua_ls'] = {
 	cmd = { 'lua-language-server' },
 	filetypes = { 'lua' },
 	settings = {
-		diagnostics = {
-			globals = { 'vim' },
-		},
-		workspace = {
-			library = {vim.env.VIMRUNTIME},
+		Lua = {
+			diagnostics = {
+				globals = { "vim" },
+			},
+			workspace = {
+				library = {vim.env.VIMRUNTIME},
+			},
 		},
 	},
 }
@@ -26,8 +28,15 @@ vim.lsp.enable({
 	'lua_ls',
 })
 
+
 --Manual Autocomplete
 vim.keymap.set('i', '<S-Tab>', '<C-x><C-o>', {desc = 'Trigger Omni Completion'})
+
+--Toggleable Inline Hints
+vim.lsp.inlay_hint.enable(true)
+vim.keymap.set('n', '<leader>th', function()
+  vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
+end, { desc = 'Toggle Inlay Hints' })
 
 
 --Toggleable autocomplete
@@ -47,11 +56,11 @@ end
 local my_autocomplete = enable_autocomplete()
 
 vim.keymap.set('n', '<leader>ta', function()
-	if my_autocomplete == '' then
+	if my_autocomplete == 0 then
 		my_autocomplete = enable_autocomplete()
 	else
 		vim.api.nvim_del_autocmd(my_autocomplete)
-		my_autocomplete = ''
+		my_autocomplete = 0
 	end
 end, {desc = "[T]oggle [A]utocomplete"})
 
@@ -66,13 +75,13 @@ local function enable_warn_hover()
 	})
 end
 
-local my_hints = enable_warn_hover()
+local my_warns = enable_warn_hover()
 
-vim.keymap.set('n', '<leader>th', function()
-	if my_hints == '' then
-		my_hints = enable_warn_hover()
+vim.keymap.set('n', '<leader>tw', function()
+	if my_warns == 0 then
+		my_warns = enable_warn_hover()
 	else
-		vim.api.nvim_del_autocmd(my_hints)
-		my_hints = ''
+		vim.api.nvim_del_autocmd(my_warns)
+		my_warns = 0
 	end
-end, {desc = "[T]oggle [H]ints"})
+end, {desc = "[T]oggle [W]Warnings"})
