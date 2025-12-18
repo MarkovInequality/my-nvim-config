@@ -14,7 +14,7 @@ vim.lsp.config['lua_ls'] = {
 	settings = {
 		Lua = {
 			diagnostics = {
-				globals = { "vim" },
+				globals = { 'vim' },
 			},
 			workspace = {
 				library = {vim.env.VIMRUNTIME},
@@ -23,11 +23,23 @@ vim.lsp.config['lua_ls'] = {
 	},
 }
 
+vim.lsp.config['python_ls'] = {
+	cmd = { 'pylsp' },
+	filetypes = { 'python' },
+	settings = {
+		pylsp = {
+			plugins = {
+				pycodestyle = { ignore = {'E501', 'E302', 'E262', 'E261'} },
+			},
+		},
+	},
+}
+
 vim.lsp.enable({
 	'rust_ls',
 	'lua_ls',
+	'python_ls',
 })
-
 
 --Manual Autocomplete
 vim.keymap.set('i', '<S-Tab>', '<C-x><C-o>', {desc = 'Trigger Omni Completion'})
@@ -43,13 +55,17 @@ end, { desc = 'Toggle Inlay Hints' })
 vim.opt.completeopt = { 'menuone', 'noinsert' }
 local function enable_autocomplete()
 	return vim.api.nvim_create_autocmd("InsertCharPre", {
-	  callback = function()
+	callback = function()
+		local c = vim.v.char
 		-- Only trigger if the popup menu is not already visible
 		if vim.fn.pumvisible() == 0 then
-		  local keys = vim.api.nvim_replace_termcodes("<C-x><C-o>", true, false, true)
-		  vim.fn.feedkeys(keys, "n")
+			if c == '}' or c == ']' or c == ')' or c == '{' or c == ',' or c == ':' then
+				return
+			end
+			local keys = vim.api.nvim_replace_termcodes("<C-x><C-o>", true, false, true)
+			vim.fn.feedkeys(keys, "n")
 		end
-	  end,
+	end,
 	})
 end
 

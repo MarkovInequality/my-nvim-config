@@ -15,8 +15,10 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
-	{ "morhetz/gruvbox" },
+	{ "catppuccin/nvim", name = "catppuccin"},
 	{ "mason-org/mason.nvim" },
+	{ "windwp/nvim-autopairs", event = "InsertEnter", config = true },
 })
 
+vim.cmd.colorscheme "catppuccin-mocha"
 require("mason").setup()
