@@ -45,7 +45,9 @@ vim.lsp.enable({
 vim.keymap.set('i', '<S-Tab>', '<C-x><C-o>', {desc = 'Trigger Omni Completion'})
 
 --Toggleable Inline Hints
-vim.lsp.inlay_hint.enable(true)
+if vim.bo.filetype ~= '' then
+	vim.lsp.inlay_hint.enable(true)
+end
 vim.keymap.set('n', '<leader>th', function()
   vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
 end, { desc = 'Toggle Inlay Hints' })
@@ -69,7 +71,10 @@ local function enable_autocomplete()
 	})
 end
 
-local my_autocomplete = enable_autocomplete()
+local my_autocomplete = 0
+if vim.bo.filetype ~= '' then
+	my_autocomplete = enable_autocomplete()
+end
 
 vim.keymap.set('n', '<leader>ta', function()
 	if my_autocomplete == 0 then
@@ -91,7 +96,10 @@ local function enable_warn_hover()
 	})
 end
 
-local my_warns = enable_warn_hover()
+local my_warns = 0
+if vim.bo.filetype ~= '' then
+	my_warns = enable_warn_hover()
+end
 
 vim.keymap.set('n', '<leader>tw', function()
 	if my_warns == 0 then
