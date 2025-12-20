@@ -41,9 +41,6 @@ vim.lsp.enable({
 	'python_ls',
 })
 
---Manual Autocomplete
-vim.keymap.set('i', '<S-Tab>', '<C-x><C-o>', {desc = 'Trigger Omni Completion'})
-
 --Toggleable Inline Hints
 vim.lsp.inlay_hint.enable(true)
 vim.keymap.set('n', '<leader>th', function()
@@ -51,9 +48,33 @@ vim.keymap.set('n', '<leader>th', function()
 end, { desc = 'Toggle Inlay Hints' })
 
 
+--Autocomplete Confirm/Reject Remap
+vim.api.nvim_create_autocmd('VimEnter', {
+	callback = function()
+		local amend = require('keymap-amend')
+		amend('i', '<Tab>', function(original)
+			if vim.fn.pumvisible() == 0 then
+				original()
+			else
+				--original can send back <Tab>, so remap is automatically set to false to prevent infinite recursion
+				--need to use feedkeys to trigger <C-y> mapping
+				vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<C-y>', true, false, true), 'n', false)
+			end
+		end, { expr = true, desc = 'Confirm Autocomplete' })
+
+		amend('i', '<S-Tab>', function(original)
+			if vim.fn.pumvisible() == 0 then
+				original()
+			else
+				vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<C-e>', true, false, true), 'n', false)
+			end
+		end, { expr = true, desc = 'Confirm Autocomplete' })
+	end
+})
+
 --Toggleable autocomplete
 vim.opt.completeopt = { 'menuone', 'noinsert' }
-local non_triggers = {'}', ']', ')', '{', ',', ':', ';', '\'', '\"'}
+local non_triggers = {'}', ']', ')', '{', ',', ':', ';', '\'', '\"', '\t'}
 local function enable_autocomplete()
 	return vim.api.nvim_create_autocmd('InsertCharPre', {
 	callback = function()
@@ -78,6 +99,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
 		end
 	end
 })
+
 vim.keymap.set('n', '<leader>ta', function()
 	if my_autocomplete == 0 then
 		my_autocomplete = enable_autocomplete()
