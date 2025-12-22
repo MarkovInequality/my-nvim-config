@@ -17,9 +17,9 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
 	{ "catppuccin/nvim", name = "catppuccin"},
 	{ "mason-org/mason.nvim" },
-	{ "anuvyklack/keymap-amend.nvim" },
+	{ "MarkovInequality/keymap-amend.nvim" },
 	{ "windwp/nvim-autopairs", event = "InsertEnter", config = true },
-	{ "huggingface/llm.nvim",
+	{ "MarkovInequality/llm.nvim",
 		opts = {
 			model = "Qwen3",
 			backend = "openai",
