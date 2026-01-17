@@ -36,7 +36,7 @@ require("lazy").setup({
 			request_body = {
 				max_tokens = 20,
 			},
-			enable_suggestions_on_startup = true,
+			enable_suggestions_on_startup = false,
 		},
 	},
 })
@@ -48,3 +48,7 @@ require("mason").setup()
 vim.keymap.set('n', '<C-Space>', function()
 	vim.cmd('LLMSuggestion')
 end, { desc = 'Trigger AI Autocomplete' })
+
+vim.keymap.set('n', '<leader>tl', function()
+	vim.cmd('LLMToggleAutoSuggest')
+end, {desc = '[T]oggle [L]lm autocomplete'})
