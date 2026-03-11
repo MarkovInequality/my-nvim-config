@@ -77,7 +77,13 @@ vim.lsp.enable({
 --Toggleable Inline Hints
 vim.lsp.inlay_hint.enable(true)
 vim.keymap.set('n', '<leader>th', function()
-  vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
+	if not vim.lsp.inlay_hint.is_enabled() then
+		vim.lsp.inlay_hint.enable(true)
+		vim.print("Enabled inlay hints")
+	else
+		vim.lsp.inlay_hint.enable(false)
+		vim.print("Disabled inlay hints")
+	end
 end, { desc = 'Toggle Inlay Hints' })
 
 
@@ -136,9 +142,11 @@ vim.api.nvim_create_autocmd('LspAttach', {
 vim.keymap.set('n', '<leader>ta', function()
 	if my_autocomplete == 0 then
 		my_autocomplete = enable_autocomplete()
+		vim.print("Enabled autocomplete")
 	else
 		vim.api.nvim_del_autocmd(my_autocomplete)
 		my_autocomplete = 0
+		vim.print("Disabled autocomplete")
 	end
 end, {desc = "[T]oggle [A]utocomplete"})
 
@@ -157,8 +165,10 @@ local my_warns = enable_warn_hover()
 vim.keymap.set('n', '<leader>tw', function()
 	if my_warns == 0 then
 		my_warns = enable_warn_hover()
+		vim.print("Enabled show warning on hover")
 	else
 		vim.api.nvim_del_autocmd(my_warns)
 		my_warns = 0
+		vim.print("Disabled show warning on hover")
 	end
 end, {desc = "[T]oggle [W]Warnings"})

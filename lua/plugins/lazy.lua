@@ -19,8 +19,37 @@ require("lazy").setup({
 	{ "mason-org/mason.nvim" },
 	{ "MarkovInequality/keymap-amend.nvim" },
 	{ "windwp/nvim-autopairs", event = "InsertEnter", config = true },
-	{ "tpope/vim-fugitive" }
+	{ "tpope/vim-fugitive" },
+	{ "MarkovInequality/llm.nvim",
+		opts = {
+			model = "Qwen3",
+			backend = "openai",
+			url = "http://localhost:5001",
+			debounce_ms = 1000,
+			accept_keymap = "<Tab>",
+			dismiss_keymap = "<S-Tab>",
+			fim = {
+				enabled = true,
+				prefix = "<|fim_prefix|>",
+				middle = "<|fim_middle|>",
+				suffix = "<|fim_suffix|>",
+			},
+			request_body = {
+				max_tokens = 20,
+			},
+			enable_suggestions_on_startup = false,
+		},
+	},
 })
 
 vim.cmd.colorscheme "catppuccin-mocha"
 require("mason").setup()
+
+--Map Start AI Autocomplete
+vim.keymap.set('n', '<C-Space>', function()
+	vim.cmd('LLMSuggestion')
+end, { desc = 'Trigger AI Autocomplete' })
+
+vim.keymap.set('n', '<leader>tl', function()
+	vim.cmd('LLMToggleAutoSuggest')
+end, {desc = '[T]oggle [L]lm autocomplete'})
