@@ -48,11 +48,44 @@ vim.lsp.config['python_ls'] = {
 	},
 }
 
+vim.lsp.config['nix_ls'] = {
+	cmd = { 'nil' },
+	filetypes = { 'nix' },
+	single_file_support = true,
+}
+
+
+
+vim.lsp.config['typescript_ls'] = {
+	cmd = { 'vtsls', '--stdio' },
+	filetypes = {
+		'typescript',
+		'javascript',
+		'javascriptreact',
+		'typescriptreact',
+	},
+}
+
+vim.lsp.config['c_ls'] = {
+	cmd = { 'clangd', '--background-index'},
+	filetypes = { 'c', 'cpp', 'objc', 'objcpp' },
+	settings = {
+		clangd = {
+			inlayHints = {
+				enable = true,
+			},
+		},
+	},
+}
+
 vim.lsp.enable({
 	'rust_ls',
 	'clangd',
 	'lua_ls',
 	'python_ls',
+	'nix_ls',
+	'typescript_ls',
+	'c_ls',
 })
 
 --Toggleable Inline Hints
@@ -94,7 +127,7 @@ vim.api.nvim_create_autocmd('VimEnter', {
 
 --Toggleable autocomplete
 vim.opt.completeopt = { 'menuone', 'noinsert', 'preview', 'fuzzy' }
-local non_triggers = {'}', ']', '(', ')', '{', ',', ';', '\'', '\"', '\t'}
+local non_triggers = {'}', ']', '(', ')', '{', ',', ' ', ';', '\'', '\"', '\t'}
 local function enable_autocomplete()
 	return vim.api.nvim_create_autocmd('InsertCharPre', {
 	callback = function()

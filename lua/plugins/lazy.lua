@@ -19,6 +19,7 @@ require("lazy").setup({
 	{ "mason-org/mason.nvim" },
 	{ "MarkovInequality/keymap-amend.nvim" },
 	{ "windwp/nvim-autopairs", event = "InsertEnter", config = true },
+	{ "tpope/vim-fugitive" },
 	{ "MarkovInequality/llm.nvim",
 		opts = {
 			model = "Qwen3",
