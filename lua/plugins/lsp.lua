@@ -8,6 +8,19 @@ vim.lsp.config['rust_ls'] = {
 	},
 }
 
+vim.lsp.config['clangd'] = {
+	cmd = { 'clangd' },
+	filetypes = { 'c', 'cpp', 'objective-c', 'objective-cpp' },
+	settings = {
+		paramHints = true,
+		inlayHints = {
+			type = true,
+			lambdaReturn = true,
+			argumentType = true,
+		}
+	},
+}
+
 vim.lsp.config['lua_ls'] = {
 	cmd = { 'lua-language-server' },
 	filetypes = { 'lua' },
@@ -37,6 +50,7 @@ vim.lsp.config['python_ls'] = {
 
 vim.lsp.enable({
 	'rust_ls',
+	'clangd',
 	'lua_ls',
 	'python_ls',
 })
@@ -79,8 +93,8 @@ vim.api.nvim_create_autocmd('VimEnter', {
 })
 
 --Toggleable autocomplete
-vim.opt.completeopt = { 'menuone', 'noinsert' }
-local non_triggers = {'}', ']', ')', '{', ',', ':', ';', '\'', '\"', '\t'}
+vim.opt.completeopt = { 'menuone', 'noinsert', 'preview', 'fuzzy' }
+local non_triggers = {'}', ']', '(', ')', '{', ',', ';', '\'', '\"', '\t'}
 local function enable_autocomplete()
 	return vim.api.nvim_create_autocmd('InsertCharPre', {
 	callback = function()
@@ -95,6 +109,14 @@ local function enable_autocomplete()
 	end,
 	})
 end
+
+vim.api.nvim_create_autocmd('CompleteDone', {
+	callback = function()
+		if vim.fn.pumvisible() == 0 then
+			vim.cmd("silent! pclose")
+		end
+	end,
+})
 
 local my_autocomplete = 0
 vim.api.nvim_create_autocmd('LspAttach', {
